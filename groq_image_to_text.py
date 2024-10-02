@@ -1,17 +1,15 @@
 from groq import Groq
 import base64
-import json
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
-groq_api_key=os.environ['GROQ_API_KEY']
+from config import get_config
+
+config = get_config()
 
 def extract_text(*, image_path:str, out_put_path:str, prompt:str) -> None:
     # Getting the base64 string
     base64_image = _encode_image(image_path)
 
-    client = Groq(api_key=groq_api_key)
+    client = Groq(api_key=config.api_keys.groq_api_key)
 
     chat_completion = client.chat.completions.create(
         messages=[

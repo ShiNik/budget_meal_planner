@@ -1,0 +1,16 @@
+api_keys:
+  openai_api_key: your_openai_api_key_here
+  groq_api_key: your_groq_api_key_here
+
+data_path:
+  pdf_path: ./data/flyer.pdf
+  recipe_books_path: ./data/recipes
+
+output_path:
+  images_path: ./outputs/extracted_images
+  products_path: ./outputs/extracted_products
+  recipes_path: ./outputs/recommended_recipes
+
+prompt_files:
+  extract_product: prompt_templates/extract_product.json
+  recommend_recipes: prompt_templates/recommend_recipes.json
