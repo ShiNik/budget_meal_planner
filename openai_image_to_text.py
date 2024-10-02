@@ -12,11 +12,11 @@ def extract_text(*, image_path:str, out_put_path:str, prompt:str) -> None:
 
   headers = {
     "Content-Type": "application/json",
-    "Authorization": f"Bearer {config.api_keys.openai_api_key}"
+    "Authorization": f"Bearer {config.api_configs.openai_api_key}"
   }
 
   payload = {
-    "model": "gpt-4o-mini",
+    "model": config.api_configs.openai_model_name,
     "messages": [
       {
         "role": "user",
@@ -34,12 +34,12 @@ def extract_text(*, image_path:str, out_put_path:str, prompt:str) -> None:
         ]
       }
     ],
-    "temperature": 0.0,
+    "temperature": config.api_configs.temperature,
     "max_tokens": 1000  # Increase the token limit to ensure detailed extraction
   }
 
   try:
-    response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+    response = requests.post(config.api_configs.openai_url, headers=headers, json=payload)
     # Convert the response to JSON
     response_data = response.json()
 

@@ -9,7 +9,7 @@ def extract_text(*, image_path:str, out_put_path:str, prompt:str) -> None:
     # Getting the base64 string
     base64_image = _encode_image(image_path)
 
-    client = Groq(api_key=config.api_keys.groq_api_key)
+    client = Groq(api_key=config.api_configs.groq_api_key)
 
     chat_completion = client.chat.completions.create(
         messages=[
@@ -27,8 +27,8 @@ def extract_text(*, image_path:str, out_put_path:str, prompt:str) -> None:
                 ],
             }
         ],
-        model="llama-3.2-11b-vision-preview",
-        temperature=1,
+        model=config.api_configs.groq_vision_model_name,
+        temperature=config.api_configs.temperature,
         max_tokens=1024,
         top_p=1,
         stream=False,

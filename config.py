@@ -1,5 +1,5 @@
 from pydantic.dataclasses import dataclass
-from pydantic import ValidationError, Field, constr
+from pydantic import ValidationError, Field
 from functools import cache
 from pathlib import Path
 import yaml
@@ -8,14 +8,54 @@ from logger import get_logger
 recipes_logger = get_logger("recipes")
 
 @dataclass(frozen=True)
-class APIKeys:
-    openai_api_key: str
-    groq_api_key: str
+class APIConfigs:
+    openai: dict
+    groq: dict
+    settings: dict
+
+    @property
+    def openai_api_key(self) -> str:
+        return self.openai['key']
+
+    @property
+    def openai_model_name(self) -> str:
+        return self.openai['model_name']
+
+    @property
+    def openai_url(self) -> str:
+        return self.openai['url']
+
+    @property
+    def groq_api_key(self) -> str:
+        return self.groq['key']
+
+    @property
+    def groq_vision_model_name(self) -> str:
+        return self.groq['vision_model_name']
+
+    @property
+    def groq_model_name(self) -> str:
+        return self.groq['model_name']
+
+    @property
+    def temperature(self) -> float:
+        return self.settings['temperature']
+
+    @property
+    def vector_index_path(self) -> str:
+        return self.settings['vector_index_path']
 
 @dataclass(frozen=True)
 class DataConfig:
-    pdf_path: str
-    recipe_books_path: str
+    paths: dict
+
+    @property
+    def pdf_path(self) -> str:
+        return self.paths['pdf']
+
+    @property
+    def recipe_books_path(self) -> str:
+        return self.paths['recipe_books']
 
     def validate_paths(self) -> None:
         for path in [self.pdf_path, self.recipe_books_path]:
@@ -24,9 +64,19 @@ class DataConfig:
 
 @dataclass(frozen=True)
 class OutputConfig:
-    images_path: str
-    products_path: str
-    recipes_path: str
+    paths: dict
+
+    @property
+    def images_path(self) -> str:
+        return self.paths['images']
+
+    @property
+    def products_path(self) -> str:
+        return self.paths['products']
+
+    @property
+    def recipes_path(self) -> str:
+        return self.paths['recipes']
 
     def ensure_paths_exist(self) -> None:
         for path in [self.images_path, self.products_path, self.recipes_path]:
@@ -34,18 +84,20 @@ class OutputConfig:
             if not output_path.exists():
                 output_path.mkdir(parents=True, exist_ok=True)
 
+@dataclass(frozen=True)
+class PromptsConfig:
+    files: dict
 
 @dataclass(frozen=True)
 class Config:
-    api_keys: APIKeys
+    api_configs: APIConfigs
     data_path: DataConfig
     output_path: OutputConfig
-    prompt_files: dict
+    prompts: PromptsConfig
 
     def validate_all_paths(self) -> None:
         self.data_path.validate_paths()
         self.output_path.ensure_paths_exist()
-
 
 @cache
 def get_config() -> Config:

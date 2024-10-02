@@ -3,12 +3,11 @@ from PyPDF2 import PdfReader
 from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_core.embeddings import Embeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from dotenv import load_dotenv
 from langchain_core.vectorstores import VectorStore
 import os
 
-load_dotenv()
-os.environ["OPENAI_API_KEY"]=os.getenv("OPENAI_API_KEY")
+from config import get_config
+config = get_config()
 
 
 def get_pdf_text(pdf_docs) -> str:
@@ -34,14 +33,20 @@ def generate_vector_store(*,pdf_docs:list[str], vector_index_path:str, embedding
     vector_store = FAISS.from_texts(texts=text_chunks, embedding=embeddings, metadatas=metadata)
     vector_store.save_local(vector_index_path)
 
+def list_pdf_files(folder_path: str) -> list:
+    pdf_files = []
+    for filename in os.listdir(folder_path):
+        if filename.endswith('.pdf'):
+            pdf_files.append(os.path.join(folder_path, filename))
+    return pdf_files
 
-def get_vector_store(vector_index_path:str="../db/faiss_index") -> VectorStore:
-
-    embeddings = OpenAIEmbeddings()
+def get_vector_store() -> VectorStore:
+    embeddings = OpenAIEmbeddings(openai_api_key=config.api_configs.openai_api_key)
+    vector_index_path = config.api_configs.vector_index_path
     if not os.path.exists(vector_index_path):
-        pdf_docs = ["./data/cook_books/2022CookingAroundtheWorldCookbook.pdf",
-                    "./data/cook_books/cookbook.pdf"]
-        generate_vector_store(pdf_docs=pdf_docs, vector_index_path=vector_index_path, embeddings=embeddings)
+        generate_vector_store(pdf_docs=list_pdf_files(config.data_path.recipe_books_path),
+                              vector_index_path=vector_index_path,
+                              embeddings=embeddings)
     else:
         print(f"find the vector store in {vector_index_path}")
     return FAISS.load_local(vector_index_path, embeddings, allow_dangerous_deserialization=True)

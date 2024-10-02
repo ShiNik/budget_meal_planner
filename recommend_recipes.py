@@ -13,9 +13,9 @@ config = get_config()
 
 def recommend_recipes(*, ingredients_list:list[Tuple[str, str]], output_path:str, vectors:VectorStore,
                       prompt_template:str) -> None:
-    llm = ChatGroq(groq_api_key=config.api_keys.groq_api_key,
-                   model_name="llama-3.1-70b-versatile",
-                   temperature=0.0)
+    llm = ChatGroq(groq_api_key=config.api_configs.groq_api_key,
+                   model_name=config.api_configs.groq_model_name,
+                   temperature=config.api_configs.temperature)
 
     prompt = ChatPromptTemplate.from_template(prompt_template)
     document_chain=create_stuff_documents_chain(llm, prompt)

@@ -1,16 +1,28 @@
-api_keys:
-  openai_api_key: your_openai_api_key_here
-  groq_api_key: your_groq_api_key_here
+api:
+  openai:
+    key: your_openai_api_key_here
+    model_name: gpt-4o-mini
+    url: https://api.openai.com/v1/chat/completions
+  groq:
+    key: your_groq_api_key_here
+    vision_model_name: llama-3.2-11b-vision-preview
+    model_name: llama-3.1-70b-versatile
+  settings:
+    temperature: 0.0
+    vector_index_path: ../db/faiss_index
 
-data_path:
-  pdf_path: ./data/flyer.pdf
-  recipe_books_path: ./data/recipes
+data:
+  paths:
+    pdf: ./data/flyer.pdf
+    recipe_books: ./data/recipes
 
-output_path:
-  images_path: ./outputs/extracted_images
-  products_path: ./outputs/extracted_products
-  recipes_path: ./outputs/recommended_recipes
+output:
+  paths:
+    images: ./outputs/extracted_images
+    products: ./outputs/extracted_products
+    recipes: ./outputs/recommended_recipes
 
-prompt_files:
-  extract_product: prompt_templates/extract_product.json
-  recommend_recipes: prompt_templates/recommend_recipes.json
+prompts:
+  files:
+    extract_product: prompt_templates/extract_product.json
+    recommend_recipes: prompt_templates/recommend_recipes.json
