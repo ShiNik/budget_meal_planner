@@ -1,9 +1,9 @@
-model_configs:
+model_config:
   extract_product:
-    key: your_openai_api_key_here
-    model_name: gpt-4o-mini
-    provider: openai
-    prompt_file: prompt_templates/extract_product.json
+    key: your_groq_api_key_here
+    model_name: llama-3.2-11b-vision-preview
+    provider: groq
+    prompt_file: prompt_templates/recommend_recipes.json
     temperature: 0.0
   embedding:
     key: your_openai_api_key_here
@@ -23,7 +23,10 @@ data_path:
 
 output_path:
     images: ./outputs/extracted_images
-    products: ./outputs/extracted_products
+    products: ./outputs/extracted_products_new
     recipes: ./outputs/recommended_recipes
 
+prompt_files:
+    extract_product: prompt_templates/extract_product.json
+    recommend_recipes: prompt_templates/recommend_recipes.json
 

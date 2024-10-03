@@ -1,4 +1,3 @@
-easyocr
 pymupdf
 pillow
 opencv-python
@@ -9,7 +8,6 @@ langchain-groq
 python-dotenv
 langchain_ollama
 matplotlib
-bs4
 tqdm
 unstructured
 pandas
@@ -18,3 +16,4 @@ tiktoken
 faiss-cpu
 PyPDF2
 mockito
+langchain-openai

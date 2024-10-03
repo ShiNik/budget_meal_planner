@@ -4,109 +4,115 @@ from functools import cache
 from pathlib import Path
 import yaml
 from logger import get_logger
-
+from common import TaskType
 recipes_logger = get_logger("recipes")
 
+def is_path_valid(path: str) -> bool:
+    return Path(path).exists()
+
+def validate_all_paths(paths: list[str]) -> None:
+    invalid_paths = list(filter(lambda path: not is_path_valid(path), paths))
+
+    if invalid_paths:
+        raise ValueError(f"Paths do not exist: {', '.join(invalid_paths)}")
+
+
 @dataclass(frozen=True)
-class APIConfigs:
-    openai: dict
-    groq: dict
-    settings: dict
+class BaseModelConfig:
+    key: str
+    model_name: str
+    provider: str
 
-    @property
-    def openai_api_key(self) -> str:
-        return self.openai['key']
+@dataclass(frozen=True)
+class ExtractProductConfig(BaseModelConfig):
+    prompt_file: str
+    temperature: float
 
-    @property
-    def openai_model_name(self) -> str:
-        return self.openai['model_name']
+    def __post_init__(self):
+        validate_all_paths([self.prompt_file])
 
-    @property
-    def openai_url(self) -> str:
-        return self.openai['url']
+@dataclass(frozen=True)
+class EmbeddingModelConfig(BaseModelConfig):
+    vector_index_path: str
 
-    @property
-    def groq_api_key(self) -> str:
-        return self.groq['key']
+@dataclass(frozen=True)
+class RecommendRecipesConfig(BaseModelConfig):
+    prompt_file: str
+    temperature: float
 
-    @property
-    def groq_vision_model_name(self) -> str:
-        return self.groq['vision_model_name']
+    def __post_init__(self):
+        validate_all_paths([self.prompt_file])
 
-    @property
-    def groq_model_name(self) -> str:
-        return self.groq['model_name']
-
-    @property
-    def temperature(self) -> float:
-        return self.settings['temperature']
-
-    @property
-    def vector_index_path(self) -> str:
-        return self.settings['vector_index_path']
+@dataclass(frozen=True)
+class ModelConfig:
+    extract_product: ExtractProductConfig
+    embedding: EmbeddingModelConfig
+    recommend_recipes: RecommendRecipesConfig
 
 @dataclass(frozen=True)
 class DataConfig:
-    paths: dict
+    pdf: str
+    recipe_books: str
 
     @property
     def pdf_path(self) -> str:
-        return self.paths['pdf']
+        return self.pdf
 
     @property
     def recipe_books_path(self) -> str:
-        return self.paths['recipe_books']
+        return self.recipe_books
 
-    def validate_paths(self) -> None:
-        for path in [self.pdf_path, self.recipe_books_path]:
-            if not Path(path).exists():
-                raise ValueError(f"Path does not exist: {path}")
+    def __post_init__(self):
+        validate_all_paths([self.pdf, self.recipe_books])
 
 @dataclass(frozen=True)
 class OutputConfig:
-    paths: dict
+    images: str
+    products: str
+    recipes: str
+
 
     @property
     def images_path(self) -> str:
-        return self.paths['images']
+        return self.images
 
     @property
     def products_path(self) -> str:
-        return self.paths['products']
+        return self.products
 
     @property
     def recipes_path(self) -> str:
-        return self.paths['recipes']
+        return self.recipes
 
-    def ensure_paths_exist(self) -> None:
+    def __post_init__(self):
         for path in [self.images_path, self.products_path, self.recipes_path]:
             output_path = Path(path)
             if not output_path.exists():
                 output_path.mkdir(parents=True, exist_ok=True)
 
 @dataclass(frozen=True)
-class PromptsConfig:
-    files: dict
-
-@dataclass(frozen=True)
 class Config:
-    api_configs: APIConfigs
+    model_configs: ModelConfig
     data_path: DataConfig
     output_path: OutputConfig
-    prompts: PromptsConfig
 
-    def validate_all_paths(self) -> None:
-        self.data_path.validate_paths()
-        self.output_path.ensure_paths_exist()
+
+    def get_model_configs(self, task_type: TaskType) -> BaseModelConfig:
+        if task_type == TaskType.EXTRACT_PRODUCT:
+            return self.model_configs.extract_product
+        if task_type == TaskType.EMBEDDING:
+            return self.model_configs.embedding
+        if task_type == TaskType.RECOMMEND_RECIPES:
+            return self.model_configs.recommend_recipes
+        return None
 
 @cache
 def get_config() -> Config:
     with Path("config.yaml").open() as config_file:
         config_dict = yaml.safe_load(config_file)
         try:
-            config = Config(**config_dict)
-            config.validate_all_paths()
-            return config
+            return Config(**config_dict)
         except (ValidationError, ValueError) as e:
             recipes_logger.info("Configuration validation failed:", e)
             raise
+

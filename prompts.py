@@ -1,3 +1,5 @@
+
+
 prompt_extract_product = """Analyze the following image of a flyer. The flyer contains both English and French text about various products. 
         Please extract the information for each product, including:
         - The product name or brand logo.
@@ -37,22 +39,22 @@ prompt_recommend_recipes = """
 
 from enum import StrEnum, auto
 import json
-from config import get_config
 from typing import Optional
+from common import TaskType
 
-class PromptType(StrEnum):
-    extract_product = auto()
-    recommend_recipes = auto()
 
 class PromptManager:
-    def __init__(self):
+    def __init__(self, config):
+        self.config = config
         self._prompts_cache = {}
 
-    def _load_prompts(self, prompt_type: PromptType) -> Optional[dict[str, str]]:
-        config = get_config()
-        filename = config.prompt_files.get(prompt_type)
+    def _load_prompts(self, task_type: TaskType) -> Optional[dict[str, str]]:
+        model_configs = self.config.get_model_configs(task_type)
+        if not model_configs:
+            raise ValueError(f"Unknown task: {task_type}")
+        filename = model_configs.prompt_file
         if not filename:
-            raise ValueError(f"No filename found for prompt type: {prompt_type}")
+            raise ValueError(f"No filename found for task type: {task_type}")
 
         try:
             with open(filename, 'r') as file:
@@ -64,9 +66,9 @@ class PromptManager:
         except Exception as e:  # Catch any other unexpected errors
             raise Exception(f"An unexpected error occurred: {e}")
 
-    def get_prompt(self, prompt_type: PromptType) -> str:
+    def get_prompt(self, task_type: TaskType) -> str:
         """Get the prompt based on the prompt type."""
-        if prompt_type not in self._prompts_cache:
-            self._prompts_cache[prompt_type] = self._load_prompts(prompt_type)
-        return self._prompts_cache.get(prompt_type, {}).get('template', None)
+        if task_type not in self._prompts_cache:
+            self._prompts_cache[task_type] = self._load_prompts(task_type)
+        return self._prompts_cache.get(task_type, {}).get('template', None)
 

@@ -1,11 +1,10 @@
 from langchain_community.vectorstores import FAISS
 from PyPDF2 import PdfReader
-from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_core.embeddings import Embeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.vectorstores import VectorStore
 import os
-
+from common import TaskType
 from config import get_config
 config = get_config()
 
@@ -40,9 +39,9 @@ def list_pdf_files(folder_path: str) -> list:
             pdf_files.append(os.path.join(folder_path, filename))
     return pdf_files
 
-def get_vector_store() -> VectorStore:
-    embeddings = OpenAIEmbeddings(openai_api_key=config.api_configs.openai_api_key)
-    vector_index_path = config.api_configs.vector_index_path
+def get_vector_store(embeddings:Embeddings) -> VectorStore:
+    model_configs = config.get_model_configs(TaskType.EMBEDDING)
+    vector_index_path = model_configs.vector_index_path
     if not os.path.exists(vector_index_path):
         generate_vector_store(pdf_docs=list_pdf_files(config.data_path.recipe_books_path),
                               vector_index_path=vector_index_path,
