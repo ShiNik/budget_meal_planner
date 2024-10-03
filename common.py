@@ -1,8 +1,10 @@
-from enum import StrEnum, auto
+from enum import StrEnum
+
 
 class ModelProvider(StrEnum):
     OPENAI = "openai"
     GROQ = "groq"
+
 
 class TaskType(StrEnum):
     EXTRACT_PRODUCT = "extract_product"

@@ -25,5 +25,3 @@ output_path:
     images: ./outputs/extracted_images
     products: ./outputs/extracted_products
     recipes: ./outputs/recommended_recipes
-
-

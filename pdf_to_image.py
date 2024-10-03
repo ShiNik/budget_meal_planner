@@ -2,7 +2,7 @@ import fitz  # PyMuPDF
 from PIL import Image
 
 
-def convert_pdf_to_images(*, pdf_path:str, output_folder:str) -> None:
+def convert_pdf_to_images(*, pdf_path: str, output_folder: str) -> None:
     # Open the PDF file
     pdf_document = fitz.open(pdf_path)
 
