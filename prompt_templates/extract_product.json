@@ -1,0 +1,3 @@
+{
+    "template": "Analyze the following image of a flyer. The flyer contains both English and French text about various products. Please extract the information for each product, including: - The product name or brand logo. - The price of the product. - Any promotions, discounts, or special offers associated with the product. - Group all the related information for each product together. Ensure that both English and French details are included for each product, and clearly indicate the product's price and any promotional offers."
+}
