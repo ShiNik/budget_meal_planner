@@ -1,6 +1,8 @@
+import json
+from typing import Optional
+from common import TaskType
 
-
-prompt_extract_product = """Analyze the following image of a flyer. The flyer contains both English and French text about various products. 
+prompt_extract_product = """Analyze the following image of a flyer. The flyer contains both English and French text about various products.
         Please extract the information for each product, including:
         - The product name or brand logo.
         - The price of the product.
@@ -9,9 +11,9 @@ prompt_extract_product = """Analyze the following image of a flyer. The flyer co
         Ensure that both English and French details are included for each product, and clearly indicate the product's price and any promotional offers."""
 
 prompt_recommend_recipes = """
-        Your job is to find a recipe from the provided context that use the given ingredients. 
+        Your job is to find a recipe from the provided context that use the given ingredients.
         Ensure that each recipe is described with the following fields:
-        - **Recipe 1: 
+        - **Recipe 1:
         - **name**: The name of the recipe.
         - **preparation_time**: The time required to prepare the recipe.
         - **directions**: A list of instructions for preparing the recipe.
@@ -37,12 +39,6 @@ prompt_recommend_recipes = """
         """
 
 
-from enum import StrEnum, auto
-import json
-from typing import Optional
-from common import TaskType
-
-
 class PromptManager:
     def __init__(self, config):
         self.config = config
@@ -57,7 +53,7 @@ class PromptManager:
             raise ValueError(f"No filename found for task type: {task_type}")
 
         try:
-            with open(filename, 'r') as file:
+            with open(filename, "r") as file:
                 return json.load(file)
         except FileNotFoundError:
             raise FileNotFoundError(f"The file {filename} was not found.")
@@ -70,5 +66,4 @@ class PromptManager:
         """Get the prompt based on the prompt type."""
         if task_type not in self._prompts_cache:
             self._prompts_cache[task_type] = self._load_prompts(task_type)
-        return self._prompts_cache.get(task_type, {}).get('template', None)
-
+        return self._prompts_cache.get(task_type, {}).get("template", None)

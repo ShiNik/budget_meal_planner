@@ -17,3 +17,4 @@ faiss-cpu
 PyPDF2
 mockito
 langchain-openai
+pre-commit

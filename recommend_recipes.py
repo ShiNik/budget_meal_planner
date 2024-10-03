@@ -1,12 +1,11 @@
 from llm_model import LLMModel
-from typing import Optional, Tuple
+from typing import Tuple
 from datetime import datetime
 
-def recommend_recipes(*, ingredients_list:list[Tuple[str, str]],
-                      output_path:str,
-                      model: LLMModel) -> None:
 
-
+def recommend_recipes(
+    *, ingredients_list: list[Tuple[str, str]], output_path: str, model: LLMModel
+) -> None:
     for index, (ingredients, conditions) in enumerate(ingredients_list):
         user_message = f"I am looking for a recipe that includes {ingredients} as ingredients. {conditions}"
         user_message = "Find a recipe that includes chicken breast as an ingredient and has less than 200 calories per serving."
@@ -20,8 +19,7 @@ def recommend_recipes(*, ingredients_list:list[Tuple[str, str]],
         recommend_recipe = user_message + "\n" + response_data
 
         # Save the text to a file
-        with open(extracted_text_path, 'w') as file:
+        with open(extracted_text_path, "w") as file:
             file.write(recommend_recipe)
 
         break
-

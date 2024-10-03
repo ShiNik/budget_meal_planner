@@ -1,14 +1,17 @@
 from pydantic.dataclasses import dataclass
-from pydantic import ValidationError, Field
+from pydantic import ValidationError
 from functools import cache
 from pathlib import Path
 import yaml
 from logger import get_logger
 from common import TaskType
+
 recipes_logger = get_logger("recipes")
+
 
 def is_path_valid(path: str) -> bool:
     return Path(path).exists()
+
 
 def validate_all_paths(paths: list[str]) -> None:
     invalid_paths = list(filter(lambda path: not is_path_valid(path), paths))
@@ -23,6 +26,7 @@ class BaseModelConfig:
     model_name: str
     provider: str
 
+
 @dataclass(frozen=True)
 class ExtractProductConfig(BaseModelConfig):
     prompt_file: str
@@ -31,9 +35,11 @@ class ExtractProductConfig(BaseModelConfig):
     def __post_init__(self):
         validate_all_paths([self.prompt_file])
 
+
 @dataclass(frozen=True)
 class EmbeddingModelConfig(BaseModelConfig):
     vector_index_path: str
+
 
 @dataclass(frozen=True)
 class RecommendRecipesConfig(BaseModelConfig):
@@ -43,11 +49,13 @@ class RecommendRecipesConfig(BaseModelConfig):
     def __post_init__(self):
         validate_all_paths([self.prompt_file])
 
+
 @dataclass(frozen=True)
 class ModelConfig:
     extract_product: ExtractProductConfig
     embedding: EmbeddingModelConfig
     recommend_recipes: RecommendRecipesConfig
+
 
 @dataclass(frozen=True)
 class DataConfig:
@@ -65,12 +73,12 @@ class DataConfig:
     def __post_init__(self):
         validate_all_paths([self.pdf, self.recipe_books])
 
+
 @dataclass(frozen=True)
 class OutputConfig:
     images: str
     products: str
     recipes: str
-
 
     @property
     def images_path(self) -> str:
@@ -90,12 +98,12 @@ class OutputConfig:
             if not output_path.exists():
                 output_path.mkdir(parents=True, exist_ok=True)
 
+
 @dataclass(frozen=True)
 class Config:
     model_configs: ModelConfig
     data_path: DataConfig
     output_path: OutputConfig
-
 
     def get_model_configs(self, task_type: TaskType) -> BaseModelConfig:
         if task_type == TaskType.EXTRACT_PRODUCT:
@@ -106,6 +114,7 @@ class Config:
             return self.model_configs.recommend_recipes
         return None
 
+
 @cache
 def get_config() -> Config:
     with Path("config.yaml").open() as config_file:
@@ -115,4 +124,3 @@ def get_config() -> Config:
         except (ValidationError, ValueError) as e:
             recipes_logger.info("Configuration validation failed:", e)
             raise
-
