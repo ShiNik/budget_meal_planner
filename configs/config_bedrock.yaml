@@ -1,0 +1,27 @@
+model_configs:
+  extract_product:
+    key: your_openai_api_key_here
+    model_name: gpt-4o-mini
+    provider: openai
+    prompt_file: prompt_templates/extract_product.json
+    temperature: 0.0
+  embedding:
+    key: your_openai_api_key_here
+    model_name: amazon.titan-embed-text-v1
+    provider: bedrock_amazon
+    vector_index_path: ../db/faiss_index
+  recommend_recipes:
+    key: your_groq_api_key_here
+    model_name: meta.llama2-70b-chat-v1
+    provider: bedrock_meta
+    prompt_file: prompt_templates/recommend_recipes.json
+    temperature: 0.0
+
+data_path:
+    pdf: ./data/flyer.pdf
+    recipe_books: ./data/recipes
+
+output_path:
+    images: ./outputs/extracted_images
+    products: ./outputs/extracted_products
+    recipes: ./outputs/recommended_recipes
