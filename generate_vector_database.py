@@ -44,13 +44,9 @@ def generate_vector_store(
         )
     else:
         documents = data_ingestion(pdf_path)
-        metadata = [
-            {"source": f"Document {i}"} for i, doc in enumerate(documents)
-        ]
         vector_store=FAISS.from_documents(
             documents=documents,
-            embedding=embeddings,
-            metadatas=metadata
+            embedding=embeddings
         )
 
     vector_store.save_local(vector_index_path)

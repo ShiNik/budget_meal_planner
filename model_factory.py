@@ -3,7 +3,7 @@ from langchain_groq import ChatGroq
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.embeddings import Embeddings
 from langchain_community.embeddings import OpenAIEmbeddings, BedrockEmbeddings
-from langchain.llms.bedrock import Bedrock
+from langchain_community.llms import Bedrock
 from common import TaskType, ModelProvider
 from config import BaseModelConfig
 import boto3
@@ -17,6 +17,7 @@ class ModelFactory:
 
     def get_model(self, task_type: TaskType) -> BaseChatModel | Embeddings:
         model_configs = self.config.get_model_configs(task_type)
+        print(task_type, model_configs.model_name,)
         if not model_configs:
             raise ValueError(f"Unknown task: {task_type}")
 
@@ -51,8 +52,8 @@ class ModelFactory:
                 temperature=model_configs.temperature,
             )
         elif model_configs.provider == ModelProvider.BEDROCK_META:
-            return Bedrock(model_id="meta.llama2-70b-chat-v1",
+            return Bedrock(model_id=model_configs.model_name,
                           client=self.bedrock,
-                          model_kwargs={'max_gen_len': 512})
+                          model_kwargs={'max_gen_len': 512, "temperature":model_configs.temperature})
         else:
             raise ValueError(f"Unknown model type: {model_configs.provider}")

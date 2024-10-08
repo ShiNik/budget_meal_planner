@@ -11,7 +11,9 @@ def recommend_recipes(
         user_message = "Find a recipe that includes chicken breast as an ingredient and has less than 200 calories per serving."
         print(user_message)
 
+
         response_data = model.runtask(user_message)
+        print(response_data)
         for answer in response_data.split("\n\n"):
             print(answer)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

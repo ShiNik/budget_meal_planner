@@ -35,7 +35,7 @@ class LLMRAG(LLMModel):
         super().__init__(model)
         self.prompt = ChatPromptTemplate.from_template(prompt_template)
         self.document_chain = create_stuff_documents_chain(self.model, self.prompt)
-        self.retriever = vectors.as_retriever()
+        self.retriever = vectors.as_retriever(search_type="mmr", search_kwargs={"k": 1})
         self.retrieval_chain = create_retrieval_chain(
             self.retriever, self.document_chain
         )

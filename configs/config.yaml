@@ -9,7 +9,7 @@ model_configs:
     key: your_openai_api_key_here
     model_name: text-embedding-ada-002
     provider: openai
-    vector_index_path: ../db/faiss_index
+    vector_index_path: ./db/faiss_index
   recommend_recipes:
     key: your_groq_api_key_here
     model_name: llama-3.1-70b-versatile
