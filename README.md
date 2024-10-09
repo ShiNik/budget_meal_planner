@@ -2,6 +2,10 @@
 - ` python 3.12`
 - ` pip`
 - ` venv`
+## cookbooks
+Download the 2 cookbook and copy them into project_roo/data/recipes/
+- [2022CookingAroundtheWorldCookbook.pdf](https://www.nutrition.va.gov/docs/UpdatedPatientEd/2022CookingAroundtheWorldCookbook.pdf)
+- [cookbook.pdf](https://foodhero.org/sites/foodhero-prod/files/health-tools/cookbook.pdf)
 
 ##  Install hooks in the project
 ` pre-commit install --hook-type commit-msg`
