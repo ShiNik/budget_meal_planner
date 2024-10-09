@@ -5,6 +5,7 @@ from pathlib import Path
 import yaml
 from logger import get_logger
 from common import TaskType
+from typing import Optional
 
 recipes_logger = get_logger("recipes")
 
@@ -25,6 +26,8 @@ class BaseModelConfig:
     key: str
     model_name: str
     provider: str
+    endpoint_name: Optional[str]
+    service_name: Optional[str]
 
 
 @dataclass(frozen=True)
@@ -114,10 +117,19 @@ class Config:
             return self.model_configs.recommend_recipes
         return None
 
+    def get_prompt_file_path(self, task_type: TaskType) -> str|None:
+        if task_type == TaskType.EXTRACT_PRODUCT:
+            return self.model_configs.extract_product.prompt_file
+        if task_type == TaskType.EMBEDDING:
+            return None
+        if task_type == TaskType.RECOMMEND_RECIPES:
+            return self.model_configs.recommend_recipes.prompt_file
+        return None
+
 
 @cache
 def get_config() -> Config:
-    with Path("config.yaml").open() as config_file:
+    with Path("configs/config.yaml").open() as config_file:
         config_dict = yaml.safe_load(config_file)
         try:
             return Config(**config_dict)

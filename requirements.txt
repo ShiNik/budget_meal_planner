@@ -18,3 +18,4 @@ PyPDF2
 mockito
 langchain-openai
 pre-commit
+boto3

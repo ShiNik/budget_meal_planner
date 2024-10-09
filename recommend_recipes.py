@@ -1,6 +1,9 @@
 from llm_model import LLMModel
 from typing import Tuple
 from datetime import datetime
+from logger import get_logger
+
+recipes_logger = get_logger("recipes")
 
 
 def recommend_recipes(
@@ -9,11 +12,13 @@ def recommend_recipes(
     for index, (ingredients, conditions) in enumerate(ingredients_list):
         user_message = f"I am looking for a recipe that includes {ingredients} as ingredients. {conditions}"
         user_message = "Find a recipe that includes chicken breast as an ingredient and has less than 200 calories per serving."
-        print(user_message)
+        recipes_logger.info(user_message)
+
 
         response_data = model.runtask(user_message)
+        recipes_logger.info(response_data)
         for answer in response_data.split("\n\n"):
-            print(answer)
+            recipes_logger.info(answer)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         extracted_text_path = f"{output_path}/recipe_{index}_{timestamp}.txt"
         recommend_recipe = user_message + "\n" + response_data

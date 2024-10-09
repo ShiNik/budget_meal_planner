@@ -6,6 +6,8 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
 from langchain_core.vectorstores import VectorStore
 from langchain_core.language_models.chat_models import BaseChatModel
+from logger import get_logger
+recipes_logger = get_logger("recipes")
 
 
 class LLMModel:
@@ -16,11 +18,11 @@ class LLMModel:
 
     def _handle_request_error(self, e: requests.exceptions.RequestException) -> None:
         """Handle request exceptions."""
-        print(f"API Request failed: {e}")
+        recipes_logger.info(f"API Request failed: {e}")
 
     def _handle_value_error(self, e: ValueError) -> None:
         """Handle value errors."""
-        print(f"Value error: {e}")
+        recipes_logger.info(f"Value error: {e}")
 
     def runtask(self, param: str):
         raise NotImplementedError
@@ -35,7 +37,7 @@ class LLMRAG(LLMModel):
         super().__init__(model)
         self.prompt = ChatPromptTemplate.from_template(prompt_template)
         self.document_chain = create_stuff_documents_chain(self.model, self.prompt)
-        self.retriever = vectors.as_retriever()
+        self.retriever = vectors.as_retriever(search_type="mmr", search_kwargs={"k": 1})
         self.retrieval_chain = create_retrieval_chain(
             self.retriever, self.document_chain
         )
@@ -44,7 +46,7 @@ class LLMRAG(LLMModel):
         try:
             response = self.retrieval_chain.invoke({"input": user_message})
             recipe_text = response.get("answer", "No recipe found.")
-            print(f"Recipe found:\n{recipe_text}")
+            recipes_logger.info(f"Recipe found:\n{recipe_text}")
             return recipe_text
 
         except requests.exceptions.RequestException as e:
@@ -76,7 +78,7 @@ class LLMImage(LLMModel):
         try:
             response = self.model.invoke([message])
             extracted_text = response.content
-            print(extracted_text)
+            recipes_logger.info(extracted_text)
             return extracted_text
 
         except requests.exceptions.RequestException as e:

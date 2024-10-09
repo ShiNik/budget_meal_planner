@@ -45,12 +45,9 @@ class PromptManager:
         self._prompts_cache = {}
 
     def _load_prompts(self, task_type: TaskType) -> Optional[dict[str, str]]:
-        model_configs = self.config.get_model_configs(task_type)
-        if not model_configs:
-            raise ValueError(f"Unknown task: {task_type}")
-        filename = model_configs.prompt_file
+        filename = self.config.get_prompt_file_path(task_type)
         if not filename:
-            raise ValueError(f"No filename found for task type: {task_type}")
+            raise ValueError(f"No prompy file found for task type: {task_type}")
 
         try:
             with open(filename, "r") as file:

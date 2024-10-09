@@ -26,7 +26,7 @@ def create_directories(directories: list[str]) -> None:
             recipes_logger.info(f"Directory already exists: {directory}")
 
 
-def main(*, extract_images: bool, extract_products: bool):
+def main(*, extract_images: bool, extract_products: bool, vector_store_test:bool):
     prompt_manager = PromptManager(config)
     model_factory = ModelFactory(config)
     if extract_images:
@@ -64,6 +64,22 @@ def main(*, extract_images: bool, extract_products: bool):
         model=llm_model,
     )
 
+    if vector_store_test:
+        query = "Find a recipe that includes chicken breast as an ingredient and has less than 200 calories per serving."
+        query = "Find a recipe that includes Andouille sausage as an ingredient."
+        vectorstore_faiss = get_vector_store(model_factory.get_model(TaskType.EMBEDDING))
+        relevant_documents = vectorstore_faiss.similarity_search_with_score(query,k=3, search_type="mmr")
+        for i, rel_doc in enumerate(relevant_documents):
+            rel_doc, distance = rel_doc[0], rel_doc[1]
+            recipes_logger.info(f"#### Document {i + 1} ####")
+            recipes_logger.info(f'{rel_doc.metadata}: \n distance:{distance} \n {rel_doc.page_content} ')
+
+            # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            # extracted_text_path = f"{config.output_path.recipes_path}/doc_{i}_{timestamp}.txt"
+            # with open(extracted_text_path, "w") as file:
+            #     file.write(rel_doc.page_content)
+
+
 
 if __name__ == "__main__":
-    main(extract_images=False, extract_products=False)
+    main(extract_images=False, extract_products=False, vector_store_test=False)
