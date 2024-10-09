@@ -6,9 +6,22 @@ from langchain_community.embeddings import OpenAIEmbeddings, BedrockEmbeddings
 from langchain_community.llms import Bedrock
 from common import TaskType, ModelProvider
 from config import BaseModelConfig
+from langchain_community.llms import SagemakerEndpoint
+from langchain_community.llms.sagemaker_endpoint import LLMContentHandler
 import boto3
+import json
 
+class ContentHandler(LLMContentHandler):
+    content_type = "application/json"
+    accepts = "application/json"
 
+    def transform_input(self, prompt: str, model_kwargs: dict) -> bytes:
+        input_str = json.dumps({"inputs": prompt, "parameters": model_kwargs})
+        return input_str.encode("utf-8")
+
+    def transform_output(self, output: bytes) -> str:
+        response_json = json.loads(output.read().decode("utf-8"))
+        return response_json[0]["generated_text"]
 
 class ModelFactory:
     def __init__(self, config):
@@ -55,5 +68,14 @@ class ModelFactory:
             return Bedrock(model_id=model_configs.model_name,
                           client=self.bedrock,
                           model_kwargs={'max_gen_len': 512, "temperature":model_configs.temperature})
+        elif model_configs.provider == ModelProvider.SAGEMAKER:
+            client = boto3.client("sagemaker-runtime")
+            SagemakerEndpoint(
+                endpoint_name=model_configs.endpoint_name,
+                client=client,
+                model_kwargs={"temperature": model_configs.temperature},
+                content_handler=ContentHandler(),
+            )
+
         else:
             raise ValueError(f"Unknown model type: {model_configs.provider}")

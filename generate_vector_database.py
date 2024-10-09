@@ -7,7 +7,9 @@ from langchain_core.vectorstores import VectorStore
 import os
 from common import TaskType
 from config import get_config
+from logger import get_logger
 
+recipes_logger = get_logger("recipes")
 config = get_config()
 
 
@@ -71,7 +73,7 @@ def get_vector_store(embeddings: Embeddings) -> VectorStore:
             embeddings=embeddings,
         )
     else:
-        print(f"find the vector store in {vector_index_path}")
+        recipes_logger.info(f"find the vector store in {vector_index_path}")
     return FAISS.load_local(
         vector_index_path, embeddings, allow_dangerous_deserialization=True
     )

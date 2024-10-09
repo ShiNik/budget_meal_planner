@@ -1,5 +1,8 @@
 import fitz  # PyMuPDF
 from PIL import Image
+from logger import get_logger
+
+recipes_logger = get_logger("recipes")
 
 
 def convert_pdf_to_images(*, pdf_path: str, output_folder: str) -> None:
@@ -20,6 +23,6 @@ def convert_pdf_to_images(*, pdf_path: str, output_folder: str) -> None:
         # Save the image
         image_path = f"{output_folder}/page_{page_num + 1}.png"
         image.save(image_path)
-        print(f"Saved page {page_num + 1} as {image_path}")
+        recipes_logger.info(f"Saved page {page_num + 1} as {image_path}")
 
-    print("All pages converted to images.")
+    recipes_logger.info("All pages converted to images.")

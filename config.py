@@ -5,6 +5,7 @@ from pathlib import Path
 import yaml
 from logger import get_logger
 from common import TaskType
+from typing import Optional
 
 recipes_logger = get_logger("recipes")
 
@@ -25,6 +26,8 @@ class BaseModelConfig:
     key: str
     model_name: str
     provider: str
+    endpoint_name: Optional[str]
+    service_name: Optional[str]
 
 
 @dataclass(frozen=True)

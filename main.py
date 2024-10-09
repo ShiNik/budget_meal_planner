@@ -71,8 +71,8 @@ def main(*, extract_images: bool, extract_products: bool, vector_store_test:bool
         relevant_documents = vectorstore_faiss.similarity_search_with_score(query,k=3, search_type="mmr")
         for i, rel_doc in enumerate(relevant_documents):
             rel_doc, distance = rel_doc[0], rel_doc[1]
-            print(f"#### Document {i + 1} ####")
-            print(f'{rel_doc.metadata}: \n distance:{distance} \n {rel_doc.page_content} ')
+            recipes_logger.info(f"#### Document {i + 1} ####")
+            recipes_logger.info(f'{rel_doc.metadata}: \n distance:{distance} \n {rel_doc.page_content} ')
 
             # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             # extracted_text_path = f"{config.output_path.recipes_path}/doc_{i}_{timestamp}.txt"
