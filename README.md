@@ -68,3 +68,6 @@ https://drive.google.com/drive/folders/1A7xufWkxwzgt40rl-vaEwC0xk2sp8bvJ
 Chat With Multiple PDF Documents With Langchain And Google Gemini Pro
 https://www.youtube.com/watch?v=uus5eLz6smA&list=PLZoTAELRMXVORE4VF7WQ_fAl0L1Gljtar&index=16
 https://github.com/krishnaik06/Complete-Langchain-Tutorials/blob/main/chatmultipledocuments/chatpdf1.py
+
+AI Agents RAG With LangGraph 
+https://www.youtube.com/watch?v=N1FM-PcVXNA&ab_channel=KrishNaik
