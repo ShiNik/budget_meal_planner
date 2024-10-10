@@ -65,7 +65,7 @@ output = "coverage.xml"
 [tool.ruff]
 target-version = "py312"
 line-length = 90
-src = ["python_iccd_demo", "tests"]
+src = ["src", "tests"]
 
 [tool.ruff.lint]
 select = [
