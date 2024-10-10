@@ -1,5 +1,5 @@
-from logging import Logger, INFO, getLogger, StreamHandler
 import sys
+from logging import INFO, Logger, StreamHandler, getLogger
 
 
 def get_logger(name: str, log_level: str = INFO) -> Logger:

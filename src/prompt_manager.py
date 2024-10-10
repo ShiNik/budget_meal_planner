@@ -1,14 +1,18 @@
 import json
-from typing import Optional
-from common import TaskType
+from pathlib import Path
 
-prompt_extract_product = """Analyze the following image of a flyer. The flyer contains both English and French text about various products.
+from common import TaskType
+from config import Config
+
+prompt_extract_product = """Analyze the following image of a flyer. The flyer contains both English and French
+        text about various products.
         Please extract the information for each product, including:
         - The product name or brand logo.
         - The price of the product.
         - Any promotions, discounts, or special offers associated with the product.
         - Group all the related information for each product together.
-        Ensure that both English and French details are included for each product, and clearly indicate the product's price and any promotional offers."""
+        Ensure that both English and French details are included for each product, and clearly indicate
+         the product's price and any promotional offers."""
 
 prompt_recommend_recipes = """
         Your job is to find a recipe from the provided context that use the given ingredients.
@@ -26,7 +30,8 @@ prompt_recommend_recipes = """
         - **saturated fat (PDV)**: Percentage of daily value for saturated fat.
         - **carbohydrates (PDV)**: Percentage of daily value for carbohydrates.
 
-        The recipes must be selected from the context provided below. If any ingredients are missing from the list, include them in the recipe details.
+        The recipes must be selected from the context provided below. If any ingredients are missing from the list,
+         include them in the recipe details.
 
         If you cannot find a recipe that meets the criteria, please state that you don’t know.
 
@@ -40,26 +45,26 @@ prompt_recommend_recipes = """
 
 
 class PromptManager:
-    def __init__(self, config):
+    def __init__(self, config: Config):
         self.config = config
         self._prompts_cache = {}
 
-    def _load_prompts(self, task_type: TaskType) -> Optional[dict[str, str]]:
+    def _load_prompts(self, task_type: TaskType) -> dict[str, str] | None:
         filename = self.config.get_prompt_file_path(task_type)
         if not filename:
             raise ValueError(f"No prompy file found for task type: {task_type}")
 
         try:
-            with open(filename, "r") as file:
+            with Path(filename).open() as file:
                 return json.load(file)
-        except FileNotFoundError:
-            raise FileNotFoundError(f"The file {filename} was not found.")
-        except json.JSONDecodeError:
-            raise ValueError(f"The file {filename} contains invalid JSON.")
-        except Exception as e:  # Catch any other unexpected errors
-            raise Exception(f"An unexpected error occurred: {e}")
+        except FileNotFoundError as err:
+            raise FileNotFoundError(f"The file {filename} was not found.") from err
+        except json.JSONDecodeError as err:
+            raise ValueError(f"The file {filename} contains invalid JSON.") from err
+        except Exception as err:  # Catch any other unexpected errors
+            raise Exception(f"An unexpected error occurred: {err}") from err
 
-    def get_prompt(self, task_type: TaskType) -> str:
+    def get_prompt(self, task_type: TaskType) -> str | None:
         """Get the prompt based on the prompt type."""
         if task_type not in self._prompts_cache:
             self._prompts_cache[task_type] = self._load_prompts(task_type)

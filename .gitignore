@@ -5,3 +5,8 @@ db
 data
 outputs
 .venv
+
+# Unit test / coverage reports
+report.xml
+coverage.xml
+.coverage

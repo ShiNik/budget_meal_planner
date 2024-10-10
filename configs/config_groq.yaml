@@ -3,13 +3,13 @@ model_config:
     key: your_groq_api_key_here
     model_name: llama-3.2-11b-vision-preview
     provider: groq
-    prompt_file: prompt_templates/recommend_recipes.json
+    prompt_file: prompt_templates/extract_product.json
     temperature: 0.0
   embedding:
     key: your_openai_api_key_here
     model_name: text-embedding-ada-002
     provider: openai
-    vector_index_path: ./db/faiss_index
+    vector_index: db/faiss_index
   recommend_recipes:
     key: your_groq_api_key_here
     model_name: llama-3.1-70b-versatile
@@ -18,15 +18,10 @@ model_config:
     temperature: 0.0
 
 data_path:
-    pdf: ./data/flyer.pdf
-    recipe_books: ./data/recipes
+    pdf: data/flyer.pdf
+    recipe_books: data/recipes
 
 output_path:
-    images: ./outputs/extracted_images
-    products: ./outputs/extracted_products_new
-    recipes: ./outputs/recommended_recipes
-
-prompt_files:
-    extract_product: prompt_templates/extract_product.json
-    recommend_recipes: prompt_templates/recommend_recipes.json
-
+    images: outputs/extracted_images
+    products: outputs/extracted_products
+    recipes: outputs/recommended_recipes
