@@ -1,0 +1,121 @@
+[tool.poetry]
+name = "budget_meal_planner"
+version = "0.1.0"
+description = ""
+authors = ["shima"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "3.12.3"
+coverage-badge = "1.1.1"
+setuptools = "75.1.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pandas = "2.2.2"
+numpy = "1.26.4"
+pre-commit = "3.7.1"
+pymupdf = "1.24.11"
+langchain = "0.3.3"
+pillow = "10.4.0"
+opencv-python = "4.10.0.84"
+langchain-community = "0.3.2"
+langchain-groq = "0.2.0"
+python-dotenv = "1.0.1"
+langchain-ollama = "0.2.0"
+matplotlib = "3.9.2"
+tqdm = "4.66.5"
+unstructured = "0.15.13"
+openai = "1.51.2"
+tiktoken = "0.8.0"
+faiss-cpu = "1.9.0"
+pypdf2 = "3.0.1"
+langchain-openai = "0.2.2"
+boto3 = "1.35.37"
+
+
+[tool.poetry.group.test.dependencies]
+mockito = "1.5.0"
+pytest = "8.2.0"
+coverage = "7.5.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-s -v --durations=0"
+cache_dir = ".cache/pytest_cache"
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+command_line = "-m pytest --junitxml=report.xml"
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.coverage.xml]
+output = "coverage.xml"
+
+
+[tool.ruff]
+target-version = "py312"
+line-length = 90
+src = ["python_iccd_demo", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle
+    "W",    # pycodestyle
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "PGH",  # pygrep-hooks
+    "ANN",  # flake8-annotations
+    "S",    # flake8-bandit
+    "C4",   # flake8-comprehensions rules
+    "A",    # flake8-builtins
+    "PTH",  # flake8-use-pathlib (over os)
+    "COM",  # flake8-commas
+    "ICN",  # flake8-import-conventions
+    "T20",  # flake8-print
+    "SIM",  # flake8-simplify
+    "B",    # flake8-boolean-trap
+#    "DTZ",  # flake8-datetimez
+    "T10",  # flake8-debugger
+    "RET",  # flake8-return
+    "FA",   # flake8-future-annotations
+    "ISC",  # flake8-implicit-str-concat
+    "PIE",  # flake8-pie
+    "PYI",  # flake8-pyi
+    "RSE",  # flake8-raise
+    "PD",   # pandas
+    "NPY",  # numpy
+    "C90",  # mccabe
+    "ERA",  # eradicate (removes commented-out code from Python files)
+    "D",    # pydocstyle
+    "N",    # pep8-naming
+    "PL",   # Pylint
+    "FLY",  # flynt
+    "PERF", # Perflint
+
+    # Cherry-pick Ruff-specific rules
+    "RUF005",   # collection-literal-concatenation
+    "RUF010",   # explicit-f-string-type-conversion
+    "RUF015",   # unnecessary-iterable-allocation-for-first-element
+    "RUF100",   # unused-noqa
+    "Q004",     # flake8-quotes (Only rule compatible with formatter)
+    "TID252",   # relative-imports
+]
+
+extend-ignore = [
+    "ANN10",    # Ignore missing type annotation for self & cls in methods
+    "D10",      # Missing docstring
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]

@@ -1,4 +1,4 @@
-from pydantic.dataclasses import dataclass
+from pydantic.dataclasses import dataclass, Field
 from pydantic import ValidationError
 from functools import cache
 from pathlib import Path
@@ -25,32 +25,49 @@ def validate_all_paths(paths: list[str]) -> None:
 class BaseModelConfig:
     key: str
     model_name: str
+    #TODO: add class for provider with all its information
     provider: str
-    endpoint_name: Optional[str]
-    service_name: Optional[str]
 
 
 @dataclass(frozen=True)
 class ExtractProductConfig(BaseModelConfig):
     prompt_file: str
     temperature: float
+    endpoint_name: Optional[str] = Field(default=None)
+    service_name: Optional[str] = Field(default=None)
+
+    @property
+    def prompt_file_path(self) -> str:
+        return _get_project_root() / self.prompt_file
 
     def __post_init__(self):
-        validate_all_paths([self.prompt_file])
+        validate_all_paths([self.prompt_file_path])
 
 
 @dataclass(frozen=True)
 class EmbeddingModelConfig(BaseModelConfig):
-    vector_index_path: str
+    vector_index: str
+    endpoint_name: Optional[str] = Field(default=None)
+    service_name: Optional[str] = Field(default=None)
+
+    @property
+    def vector_index_path(self) -> str:
+        return _get_project_root() / self.vector_index
 
 
 @dataclass(frozen=True)
 class RecommendRecipesConfig(BaseModelConfig):
     prompt_file: str
     temperature: float
+    endpoint_name: Optional[str] = Field(default=None)
+    service_name: Optional[str] = Field(default=None)
+
+    @property
+    def prompt_file_path(self) -> str:
+        return _get_project_root() / self.prompt_file
 
     def __post_init__(self):
-        validate_all_paths([self.prompt_file])
+        validate_all_paths([self.prompt_file_path])
 
 
 @dataclass(frozen=True)
@@ -67,14 +84,14 @@ class DataConfig:
 
     @property
     def pdf_path(self) -> str:
-        return self.pdf
+        return _get_project_root() / self.pdf
 
     @property
     def recipe_books_path(self) -> str:
-        return self.recipe_books
+        return _get_project_root() / self.recipe_books
 
     def __post_init__(self):
-        validate_all_paths([self.pdf, self.recipe_books])
+        validate_all_paths([self.pdf_path, self.recipe_books_path])
 
 
 @dataclass(frozen=True)
@@ -85,15 +102,15 @@ class OutputConfig:
 
     @property
     def images_path(self) -> str:
-        return self.images
+        return _get_project_root() / self.images
 
     @property
     def products_path(self) -> str:
-        return self.products
+        return _get_project_root() / self.products
 
     @property
     def recipes_path(self) -> str:
-        return self.recipes
+        return _get_project_root() / self.recipes
 
     def __post_init__(self):
         for path in [self.images_path, self.products_path, self.recipes_path]:
@@ -119,17 +136,25 @@ class Config:
 
     def get_prompt_file_path(self, task_type: TaskType) -> str|None:
         if task_type == TaskType.EXTRACT_PRODUCT:
-            return self.model_configs.extract_product.prompt_file
+            return self.model_configs.extract_product.prompt_file_path
         if task_type == TaskType.EMBEDDING:
             return None
         if task_type == TaskType.RECOMMEND_RECIPES:
-            return self.model_configs.recommend_recipes.prompt_file
+            return self.model_configs.recommend_recipes.prompt_file_path
         return None
+
+
+
+
+def _get_project_root() -> Path:
+    return Path(__file__).parent.parent.resolve()
 
 
 @cache
 def get_config() -> Config:
-    with Path("configs/config.yaml").open() as config_file:
+    config_path = _get_project_root() / "configs/config.yaml"
+    print(config_path)
+    with config_path.open() as config_file:
         config_dict = yaml.safe_load(config_file)
         try:
             return Config(**config_dict)
