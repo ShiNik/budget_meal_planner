@@ -1,11 +1,12 @@
-from pydantic.dataclasses import dataclass, Field
-from pydantic import ValidationError
 from functools import cache
 from pathlib import Path
+
 import yaml
-from logger import get_logger
+from pydantic import ValidationError
+from pydantic.dataclasses import Field, dataclass
+
 from common import TaskType
-from typing import Optional
+from logger import get_logger
 
 recipes_logger = get_logger("recipes")
 
@@ -25,7 +26,7 @@ def validate_all_paths(paths: list[str]) -> None:
 class BaseModelConfig:
     key: str
     model_name: str
-    #TODO: add class for provider with all its information
+    # TODO: add class for provider with all its information
     provider: str
 
 
@@ -33,8 +34,8 @@ class BaseModelConfig:
 class ExtractProductConfig(BaseModelConfig):
     prompt_file: str
     temperature: float
-    endpoint_name: Optional[str] = Field(default=None)
-    service_name: Optional[str] = Field(default=None)
+    endpoint_name: str | None = Field(default=None)
+    service_name: str | None = Field(default=None)
 
     @property
     def prompt_file_path(self) -> str:
@@ -47,8 +48,8 @@ class ExtractProductConfig(BaseModelConfig):
 @dataclass(frozen=True)
 class EmbeddingModelConfig(BaseModelConfig):
     vector_index: str
-    endpoint_name: Optional[str] = Field(default=None)
-    service_name: Optional[str] = Field(default=None)
+    endpoint_name: str | None = Field(default=None)
+    service_name: str | None = Field(default=None)
 
     @property
     def vector_index_path(self) -> str:
@@ -59,8 +60,8 @@ class EmbeddingModelConfig(BaseModelConfig):
 class RecommendRecipesConfig(BaseModelConfig):
     prompt_file: str
     temperature: float
-    endpoint_name: Optional[str] = Field(default=None)
-    service_name: Optional[str] = Field(default=None)
+    endpoint_name: str | None = Field(default=None)
+    service_name: str | None = Field(default=None)
 
     @property
     def prompt_file_path(self) -> str:
@@ -134,7 +135,7 @@ class Config:
             return self.model_configs.recommend_recipes
         return None
 
-    def get_prompt_file_path(self, task_type: TaskType) -> str|None:
+    def get_prompt_file_path(self, task_type: TaskType) -> str | None:
         if task_type == TaskType.EXTRACT_PRODUCT:
             return self.model_configs.extract_product.prompt_file_path
         if task_type == TaskType.EMBEDDING:
@@ -144,8 +145,6 @@ class Config:
         return None
 
 
-
-
 def _get_project_root() -> Path:
     return Path(__file__).parent.parent.resolve()
 
@@ -153,11 +152,16 @@ def _get_project_root() -> Path:
 @cache
 def get_config() -> Config:
     config_path = _get_project_root() / "configs/config.yaml"
-    print(config_path)
-    with config_path.open() as config_file:
-        config_dict = yaml.safe_load(config_file)
-        try:
-            return Config(**config_dict)
-        except (ValidationError, ValueError) as e:
-            recipes_logger.info("Configuration validation failed:", e)
-            raise
+
+    try:
+        with config_path.open() as config_file:
+            config_dict = yaml.safe_load(config_file)
+    except FileNotFoundError as err:
+        raise FileNotFoundError(f"Configuration file not found: {config_path}") from err
+    except Exception as err:  # Catch other unexpected errors
+        raise Exception(f"An unexpected error occurred while reading the config file: {err}") from err
+
+    try:
+        return Config(**config_dict)
+    except (ValidationError, ValueError) as err:
+        raise ValueError("Configuration validation failed: " + {err}) from err

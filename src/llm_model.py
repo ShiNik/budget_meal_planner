@@ -1,12 +1,16 @@
 import base64
+from pathlib import Path
+
 import requests
-from langchain_core.messages import HumanMessage
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_retrieval_chain
-from langchain_core.vectorstores import VectorStore
+from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.messages import HumanMessage
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.vectorstores import VectorStore
+
 from logger import get_logger
+
 recipes_logger = get_logger("recipes")
 
 
@@ -32,17 +36,21 @@ class LLMRAG(LLMModel):
     """Handles RAG tasks like recipe recommendations."""
 
     def __init__(
-        self, model: BaseChatModel, prompt_template: str, vectors: VectorStore
+        self,
+        model: BaseChatModel,
+        prompt_template: str,
+        vectors: VectorStore,
     ):
         super().__init__(model)
         self.prompt = ChatPromptTemplate.from_template(prompt_template)
         self.document_chain = create_stuff_documents_chain(self.model, self.prompt)
         self.retriever = vectors.as_retriever(search_type="mmr", search_kwargs={"k": 1})
         self.retrieval_chain = create_retrieval_chain(
-            self.retriever, self.document_chain
+            self.retriever,
+            self.document_chain,
         )
 
-    def runtask(self, user_message: str):
+    def runtask(self, user_message: str) -> str:
         try:
             response = self.retrieval_chain.invoke({"input": user_message})
             recipe_text = response.get("answer", "No recipe found.")
@@ -62,7 +70,7 @@ class LLMImage(LLMModel):
         super().__init__(model)
         self.prompt = prompt
 
-    def runtask(self, image_path: str):
+    def runtask(self, image_path: str) -> str:
         """Run Image task: Extract text from an image."""
         image_data = self._encode_image(image_path)
         message = HumanMessage(
@@ -87,6 +95,5 @@ class LLMImage(LLMModel):
             self._handle_value_error(ve)
 
     def _encode_image(self, image_path: str) -> str:
-        """Encodes an image to base64 format."""
-        with open(image_path, "rb") as image_file:
+        with Path(image_path).open("rb") as image_file:
             return base64.b64encode(image_file.read()).decode("utf-8")

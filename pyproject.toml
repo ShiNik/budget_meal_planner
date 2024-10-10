@@ -64,7 +64,7 @@ output = "coverage.xml"
 
 [tool.ruff]
 target-version = "py312"
-line-length = 90
+line-length = 120
 src = ["src", "tests"]
 
 [tool.ruff.lint]
@@ -116,6 +116,12 @@ extend-ignore = [
     "ANN10",    # Ignore missing type annotation for self & cls in methods
     "D10",      # Missing docstring
 ]
+[tool.ruff.lint.flake8-annotations]
+mypy-init-return = true             # Return type on __init__
+suppress-none-returning = true      # Missing "-> None"
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"       # Disallow all relative imports
 
 [tool.ruff.lint.isort]
 known-first-party = ["src"]
