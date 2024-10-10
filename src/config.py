@@ -11,15 +11,12 @@ from logger import get_logger
 recipes_logger = get_logger("recipes")
 
 
-def is_path_valid(path: str) -> bool:
-    return Path(path).exists()
-
-
-def validate_all_paths(paths: list[str]) -> None:
-    invalid_paths = list(filter(lambda path: not is_path_valid(path), paths))
+def validate_all_paths(paths: list[Path]) -> None:
+    invalid_paths = list(filter(lambda path: not path.exists(), paths))
 
     if invalid_paths:
-        raise ValueError(f"Paths do not exist: {', '.join(invalid_paths)}")
+        invalid_paths_str = [str(path) for path in invalid_paths]
+        raise ValueError(f"Paths do not exist: {', '.join(invalid_paths_str)}")
 
 
 @dataclass(frozen=True)
@@ -164,4 +161,4 @@ def get_config() -> Config:
     try:
         return Config(**config_dict)
     except (ValidationError, ValueError) as err:
-        raise ValueError("Configuration validation failed: " + {err}) from err
+        raise ValueError(f"Configuration validation failed: {err}") from err

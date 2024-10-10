@@ -1,17 +1,18 @@
 import unittest
-
 from mockito import verify, when
-
 from common import TaskType
 from config import get_config
 from prompt_manager import PromptManager
+import config
 
-config = get_config()
+
+
 
 
 class TestPromptManager(unittest.TestCase):
     def setUp(self):
-        self.prompt_manager = PromptManager(config)
+        when(config).validate_all_paths(...).thenReturn(None)
+        self.prompt_manager = PromptManager(get_config())
 
     def test_get_prompt_success(self):
         # Mock the return value of _load_prompts
