@@ -26,7 +26,7 @@ poetry run coverage run && poetry run coverage report && poetry run coverage xml
 ```
 
 ## cookbooks
-Download the 2 cookbook and copy them into project_roo/data/recipes/
+Download the 2 cookbooks and copy them into project_root/data/recipes/
 - [2022CookingAroundtheWorldCookbook.pdf](https://www.nutrition.va.gov/docs/UpdatedPatientEd/2022CookingAroundtheWorldCookbook.pdf)
 - [cookbook.pdf](https://foodhero.org/sites/foodhero-prod/files/health-tools/cookbook.pdf)
 

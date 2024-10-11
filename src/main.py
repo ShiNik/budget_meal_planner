@@ -66,6 +66,7 @@ def main(*, extract_images: bool, extract_products: bool, vector_store_test: boo
     )
 
     if vector_store_test:
+       #TODO: This is a test code to find the best solution for retrieving data from a vector database.
         query = (
             "Find a recipe that includes chicken breast as an ingredient and has less than 200 calories per serving."
         )

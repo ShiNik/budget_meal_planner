@@ -1,4 +1,5 @@
 def generate_product_group() -> list[tuple[str, str]]:
+    #TODO: Implement the product grouping feature. Currently, it always returns a fixed set of product groups.
     return [
         ("Andouille sausage, chipotle chile pepper and chicken broth", ""),
         ("fenugreek, chicken, and onion", ""),
