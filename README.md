@@ -1,9 +1,32 @@
-## Prerequisites
-- ` python 3.12`
-- ` pip`
-- ` venv`
+[![Python 3.12.3](https://img.shields.io/badge/python-3.12.3-blue.svg)](https://www.python.org/downloads/release/python-3123/)
+[![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+![Coverage](coverage.svg)
+[![Dependabot](https://badgen.net/badge/Dependabot/enabled/orange?icon=dependabot)](https://dependabot.com/)
+[![Actions status](https://github.com/astral-sh/ruff/workflows/CI/badge.svg)](https://github.com/ShiNik/python-cicd-demo/actions)
+[![image](https://img.shields.io/pypi/l/ruff.svg)](https://github.com/ShiNik/python-cicd-demo/blob/main/LICENSE)
+
+
+## Step 1: Install python:
+sudo apt-get install python3.12.3
+
+## Step 2: install poetry:
+curl -sSL https://install.python-poetry.org | python3 -
+
+## Step 3: Set Up the Virtual Environment
+1. Create a virtual environment by typing: `poetry install`
+2. poetry run pre-commit install --hook-type commit-msg
+
+# run pre-commit hook
+by typing: `pre-commit run --all-files`
+
+# coverage: Run pytest test coverage
+```
+poetry run coverage run && poetry run coverage report && poetry run coverage xml && poetry run coverage-badge -f -o coverage.svg
+```
+
 ## cookbooks
-Download the 2 cookbook and copy them into project_roo/data/recipes/
+Download the 2 cookbooks and copy them into project_root/data/recipes/
 - [2022CookingAroundtheWorldCookbook.pdf](https://www.nutrition.va.gov/docs/UpdatedPatientEd/2022CookingAroundtheWorldCookbook.pdf)
 - [cookbook.pdf](https://foodhero.org/sites/foodhero-prod/files/health-tools/cookbook.pdf)
 
@@ -45,3 +68,6 @@ https://drive.google.com/drive/folders/1A7xufWkxwzgt40rl-vaEwC0xk2sp8bvJ
 Chat With Multiple PDF Documents With Langchain And Google Gemini Pro
 https://www.youtube.com/watch?v=uus5eLz6smA&list=PLZoTAELRMXVORE4VF7WQ_fAl0L1Gljtar&index=16
 https://github.com/krishnaik06/Complete-Langchain-Tutorials/blob/main/chatmultipledocuments/chatpdf1.py
+
+AI Agents RAG With LangGraph 
+https://www.youtube.com/watch?v=N1FM-PcVXNA&ab_channel=KrishNaik

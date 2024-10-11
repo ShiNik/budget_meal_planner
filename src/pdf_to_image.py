@@ -1,5 +1,6 @@
 import fitz  # PyMuPDF
 from PIL import Image
+
 from logger import get_logger
 
 recipes_logger = get_logger("recipes")
