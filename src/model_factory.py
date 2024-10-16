@@ -7,6 +7,7 @@ from langchain_community.llms.sagemaker_endpoint import LLMContentHandler
 from langchain_core.embeddings import Embeddings
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_groq import ChatGroq
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_openai import ChatOpenAI
 
 from common import ModelProvider, TaskType
@@ -36,7 +37,7 @@ class ModelFactory:
 
     def get_model(self, task_type: TaskType) -> BaseChatModel | Embeddings:
         model_configs = self.config.get_model_configs(task_type)
-        recipes_logger.info(task_type, model_configs.model_name)
+        recipes_logger.info(f"{task_type}  and model name is {model_configs.model_name}")
         if not model_configs:
             raise ValueError(f"Unknown task: {task_type}")
 
@@ -50,10 +51,13 @@ class ModelFactory:
 
     def _get_embedding_model(self, model_configs: BaseModelConfig) -> Embeddings:
         if model_configs.provider == ModelProvider.OPENAI:
-            return OpenAIEmbeddings(openai_api_key=model_configs.key)
+            return OpenAIEmbeddings(model=model_configs.model_name, openai_api_key=model_configs.key)
 
         if model_configs.provider == ModelProvider.BEDROCK_AMAZON:
             return BedrockEmbeddings(model_id=model_configs.model_name, client=self.bedrock)
+
+        if model_configs.provider == ModelProvider.HUGGINGFACE:
+            return HuggingFaceEmbeddings(model_name=model_configs.model_name)
 
         raise ValueError(f"Unknown model type: {model_configs.provider}")
 

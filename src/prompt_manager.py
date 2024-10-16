@@ -4,15 +4,18 @@ from pathlib import Path
 from common import TaskType
 from config import Config
 
-prompt_extract_product = """Analyze the following image of a flyer. The flyer contains both English and French
-        text about various products.
-        Please extract the information for each product, including:
-        - The product name or brand logo.
-        - The price of the product.
-        - Any promotions, discounts, or special offers associated with the product.
-        - Group all the related information for each product together.
-        Ensure that both English and French details are included for each product, and clearly indicate
-         the product's price and any promotional offers."""
+prompt_extract_product = """Analyze the following image of a flyer. The flyer contains both English and French text
+    about various products. Please extract the information for each product, including:
+    - The product name or brand logo.
+    - The price of the product.
+    - Any promotions, discounts, or special offers associated with the product.
+    - Group all the related information for each product together.
+    - Categorize each product into one of the following groups:
+     'Chicken,' 'Fish', 'Pork','Beef', 'Vegetable', 'Fruit,' or 'Others.'
+
+    Ensure that both English and French details are included for each product,
+    clearly indicating the product's price and any promotional offers. Additionally,
+    make sure to assign each product to the correct category based on the type of product."""
 
 prompt_recommend_recipes = """
         Your job is to find a recipe from the provided context that use the given ingredients.

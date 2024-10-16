@@ -7,6 +7,7 @@ class ModelProvider(StrEnum):
     BEDROCK_AMAZON = "bedrock_amazon"
     BEDROCK_META = "bedrock_meta"
     SAGEMAKER = "sagemaker"
+    HUGGINGFACE = "huggingface"
 
 
 class TaskType(StrEnum):
