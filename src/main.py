@@ -48,10 +48,10 @@ def main(
         image_files_path = list_files_in_folder(config.output_path.images_path, "*.png")
         for image_path in tqdm(image_files_path, desc="Extracting product from flyer pages"):
             recipes_logger.info(f"Extracting product from {get_name_from_path(image_path)}")
-            out_put_path = f"{config.output_path.products_path}/{get_name_from_path(image_path)}"
+            output_path = f"{config.output_path.products_path}/{get_name_from_path(image_path)}"
             extract_text(
                 image_path=image_path,
-                out_put_path=out_put_path,
+                output_path=output_path,
                 model=LLMImage(
                     model=model_factory.get_model(TaskType.EXTRACT_PRODUCT),
                     prompt=prompt_manager.get_prompt(TaskType.EXTRACT_PRODUCT),

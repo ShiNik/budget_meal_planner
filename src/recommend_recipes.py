@@ -16,6 +16,7 @@ def recommend_recipes(
     model: LLMModel,
 ) -> None:
     for index, ingredients in enumerate(tqdm(ingredients_list, desc="Find a recipes for ingredients:")):
+        #TODO: We need to add a condition to specify the foods type like vegetarian
         if ingredients == "vegetable":
             user_message = "Find a vegetarian recipe that includes vegetables as ingredients."
         else:
