@@ -1,9 +1,9 @@
-
 from pathlib import Path
+
+from tqdm import tqdm
 
 from common import TaskType
 from config import get_config
-from select_products import generate_random_products_selection
 from image_to_text import extract_text
 from llm_model import LLMRAG, LLMImage
 from logger import get_logger
@@ -11,9 +11,9 @@ from model_factory import ModelFactory
 from pdf_to_image import convert_pdf_to_images
 from prompt_manager import PromptManager
 from recommend_recipes import recommend_recipes
+from select_products import generate_random_products_selection
+from utils import get_name_from_path, list_files_in_folder
 from vector_database import create_vector_database
-from utils import list_files_in_folder, get_name_from_path
-from tqdm import tqdm
 
 config = get_config()
 recipes_logger = get_logger("recipes")
@@ -29,7 +29,13 @@ def create_directories(directories: list[str]) -> None:
             recipes_logger.info(f"Directory already exists: {directory}")
 
 
-def main(*, extract_images: bool, extract_products: bool, execute_recipe_recommendation:bool, vector_store_test: bool) -> None:
+def main(
+    *,
+    extract_images: bool,
+    extract_products: bool,
+    execute_recipe_recommendation: bool,
+    vector_store_test: bool,
+) -> None:
     prompt_manager = PromptManager(config)
     model_factory = ModelFactory(config)
     if extract_images:
@@ -68,7 +74,7 @@ def main(*, extract_images: bool, extract_products: bool, execute_recipe_recomme
         )
 
     if vector_store_test:
-       #TODO: This is a test code to find the best solution for retrieving data from a vector database.
+        # TODO: This is a test code to find the best solution for retrieving data from a vector database.
         query = (
             "Find a recipe that includes chicken breast as an ingredient and has less than 200 calories per serving."
         )

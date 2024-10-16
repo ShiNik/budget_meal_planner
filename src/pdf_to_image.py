@@ -1,8 +1,8 @@
 import fitz  # PyMuPDF
 from PIL import Image
+from tqdm import tqdm
 
 from logger import get_logger
-from tqdm import tqdm
 
 recipes_logger = get_logger("recipes")
 
@@ -12,8 +12,8 @@ def convert_pdf_to_images(*, pdf_path: str, output_folder: str) -> None:
     pdf_document = fitz.open(pdf_path)
 
     # Iterate through each page
-    #for page_num in range(len(pdf_document)):
-    for page_num in tqdm(range(0, len(pdf_document)), desc=f"Processing {pdf_path}"):
+    # for page_num in range(len(pdf_document)):
+    for page_num in tqdm(range(len(pdf_document)), desc=f"Processing {pdf_path}"):
         # Get the page
         page = pdf_document.load_page(page_num)
 

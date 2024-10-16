@@ -7,8 +7,8 @@ from langchain_community.llms.sagemaker_endpoint import LLMContentHandler
 from langchain_core.embeddings import Embeddings
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_groq import ChatGroq
-from langchain_openai import ChatOpenAI
 from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import ChatOpenAI
 
 from common import ModelProvider, TaskType
 from config import BaseModelConfig, Config

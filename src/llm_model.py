@@ -85,9 +85,7 @@ class LLMImage(LLMModel):
 
         try:
             response = self.model.invoke([message])
-            extracted_text = response.content
-            #recipes_logger.info(extracted_text)
-            return extracted_text
+            return response.content
 
         except requests.exceptions.RequestException as e:
             self._handle_request_error(e)

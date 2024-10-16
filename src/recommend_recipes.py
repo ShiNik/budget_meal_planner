@@ -1,9 +1,10 @@
 from datetime import datetime
 from pathlib import Path
 
+from tqdm import tqdm
+
 from llm_model import LLMModel
 from logger import get_logger
-from tqdm import tqdm
 
 recipes_logger = get_logger("recipes")
 
