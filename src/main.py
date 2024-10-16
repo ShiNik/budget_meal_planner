@@ -1,9 +1,9 @@
-from datetime import datetime
+
 from pathlib import Path
 
 from common import TaskType
 from config import get_config
-from group_products import generate_product_group
+from select_products import generate_random_products_selection
 from image_to_text import extract_text
 from llm_model import LLMRAG, LLMImage
 from logger import get_logger
@@ -12,6 +12,8 @@ from pdf_to_image import convert_pdf_to_images
 from prompt_manager import PromptManager
 from recommend_recipes import recommend_recipes
 from vector_database import create_vector_database
+from utils import list_files_in_folder, get_name_from_path
+from tqdm import tqdm
 
 config = get_config()
 recipes_logger = get_logger("recipes")
@@ -37,23 +39,22 @@ def main(*, extract_images: bool, extract_products: bool, execute_recipe_recomme
         )
 
     if extract_products:
-        page_number = 1
-        model_configs = config.get_model_configs(TaskType.EXTRACT_PRODUCT)
-        image_path = f"{config.output_path.images_path}/page_{page_number}.png"
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        out_put_path = f"{config.output_path.products_path}/{model_configs.provider}_page_{page_number}_{timestamp}"
-        extract_text(
-            image_path=image_path,
-            out_put_path=out_put_path,
-            model=LLMImage(
-                model=model_factory.get_model(TaskType.EXTRACT_PRODUCT),
-                prompt=prompt_manager.get_prompt(TaskType.EXTRACT_PRODUCT),
-            ),
-        )
+        image_files_path = list_files_in_folder(config.output_path.images_path, "*.png")
+        for image_path in tqdm(image_files_path, desc="Extracting product from flyer pages"):
+            recipes_logger.info(f"Extracting product from {get_name_from_path(image_path)}")
+            out_put_path = f"{config.output_path.products_path}/{get_name_from_path(image_path)}"
+            extract_text(
+                image_path=image_path,
+                out_put_path=out_put_path,
+                model=LLMImage(
+                    model=model_factory.get_model(TaskType.EXTRACT_PRODUCT),
+                    prompt=prompt_manager.get_prompt(TaskType.EXTRACT_PRODUCT),
+                ),
+            )
+
+    ingredients_list = generate_random_products_selection(config.output_path.products_path)
 
     if execute_recipe_recommendation:
-        ingredients_list = generate_product_group()
-
         llm_model = LLMRAG(
             model=model_factory.get_model(TaskType.RECOMMEND_RECIPES),
             prompt_template=prompt_manager.get_prompt(TaskType.RECOMMEND_RECIPES),
@@ -87,4 +88,4 @@ def main(*, extract_images: bool, extract_products: bool, execute_recipe_recomme
 
 
 if __name__ == "__main__":
-    main(extract_images=False, extract_products=False, execute_recipe_recommendation=False, vector_store_test=True)
+    main(extract_images=False, extract_products=False, execute_recipe_recommendation=False, vector_store_test=False)

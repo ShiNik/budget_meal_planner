@@ -3,21 +3,22 @@ from pathlib import Path
 
 from llm_model import LLMModel
 from logger import get_logger
+from tqdm import tqdm
 
 recipes_logger = get_logger("recipes")
 
 
 def recommend_recipes(
     *,
-    ingredients_list: list[tuple[str, str]],
+    ingredients_list: list[str],
     output_path: str,
     model: LLMModel,
 ) -> None:
-    for index, (ingredients, conditions) in enumerate(ingredients_list):
-        user_message = f"I am looking for a recipe that includes {ingredients} as ingredients. {conditions}"
-        user_message = (
-            "Find a recipe that includes chicken breast as an ingredient and has less than 200 calories per serving."
-        )
+    for index, ingredients in enumerate(tqdm(ingredients_list, desc="Find a recipes for ingredients:")):
+        if ingredients == "vegetable":
+            user_message = "Find a vegetarian recipe that includes vegetables as ingredients."
+        else:
+            user_message = f"Find a recipe that includes {ingredients} as ingredients."
         recipes_logger.info(user_message)
 
         response_data = model.runtask(user_message)
@@ -31,5 +32,3 @@ def recommend_recipes(
         # Save the text to a file
         with Path(extracted_text_path).open("w") as file:
             file.write(recommend_recipe)
-
-        break
