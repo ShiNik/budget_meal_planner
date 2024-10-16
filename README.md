@@ -39,6 +39,13 @@ Download the 2 cookbooks and copy them into project_root/data/recipes/
 - `pre-commit run --files file1.py file2.py`
 
 
+## Kafka
+sudo docker run --name zookeeper  --network kafka-net -p 2181:2181  zookeeper
+sudo docker run -p 9092:9092 --name kafka  --network kafka-net -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka
+` docker-compose up -d`
+
+
+
 ## Download Ollama and Choose a Model
 
 1. Visit [Ollama](https://ollama.com/) to download Ollama.
