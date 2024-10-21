@@ -28,7 +28,7 @@ class LLMModel:
         """Handle value errors."""
         recipes_logger.info(f"Value error: {e}")
 
-    def runtask(self, param: str):
+    async def runtask(self, param: str):
         raise NotImplementedError
 
 
@@ -50,9 +50,9 @@ class LLMRAG(LLMModel):
             self.document_chain,
         )
 
-    def runtask(self, user_message: str) -> str:
+    async def runtask(self, user_message: str) -> str:
         try:
-            response = self.retrieval_chain.invoke({"input": user_message})
+            response = await self.retrieval_chain.ainvoke({"input": user_message})
             recipe_text = response.get("answer", "No recipe found.")
             recipes_logger.info(f"Recipe found:\n{recipe_text}")
             return recipe_text
@@ -70,7 +70,7 @@ class LLMImage(LLMModel):
         super().__init__(model)
         self.prompt = prompt
 
-    def runtask(self, image_path: str) -> str:
+    async def runtask(self, image_path: str) -> str:
         """Run Image task: Extract text from an image."""
         image_data = self._encode_image(image_path)
         message = HumanMessage(
@@ -84,7 +84,7 @@ class LLMImage(LLMModel):
         )
 
         try:
-            response = self.model.invoke([message])
+            response = await self.model.ainvoke([message])
             return response.content
 
         except requests.exceptions.RequestException as e:

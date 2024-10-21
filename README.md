@@ -38,6 +38,8 @@ Download the 2 cookbooks and copy them into project_root/data/recipes/
 - ` pre-commit run <hook-id>`
 - `pre-commit run --files file1.py file2.py`
 
+For detailed information, please refer to the [Task and Improvement Tracker](https://github.com/ShiNik/budget_meal_planner/wiki),
+where you can find an overview of ongoing tasks, completed improvements, and project milestones.
 
 ## Kafka
 sudo docker run --name zookeeper  --network kafka-net -p 2181:2181  zookeeper

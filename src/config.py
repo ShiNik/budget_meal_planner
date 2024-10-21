@@ -35,7 +35,7 @@ class ExtractProductConfig(BaseModelConfig):
     service_name: str | None = Field(default=None)
 
     @property
-    def prompt_file_path(self) -> str:
+    def prompt_file_path(self) -> Path:
         return _get_project_root() / self.prompt_file
 
     def __post_init__(self):
@@ -49,7 +49,7 @@ class EmbeddingModelConfig(BaseModelConfig):
     service_name: str | None = Field(default=None)
 
     @property
-    def vector_index_path(self) -> str:
+    def vector_index_path(self) -> Path:
         return _get_project_root() / self.vector_index
 
 
@@ -61,7 +61,7 @@ class RecommendRecipesConfig(BaseModelConfig):
     service_name: str | None = Field(default=None)
 
     @property
-    def prompt_file_path(self) -> str:
+    def prompt_file_path(self) -> Path:
         return _get_project_root() / self.prompt_file
 
     def __post_init__(self):
@@ -81,11 +81,11 @@ class DataConfig:
     recipe_books: str
 
     @property
-    def pdf_path(self) -> str:
+    def pdf_path(self) -> Path:
         return _get_project_root() / self.pdf
 
     @property
-    def recipe_books_path(self) -> str:
+    def recipe_books_path(self) -> Path:
         return _get_project_root() / self.recipe_books
 
     def __post_init__(self):
@@ -99,15 +99,15 @@ class OutputConfig:
     recipes: str
 
     @property
-    def images_path(self) -> str:
+    def images_path(self) -> Path:
         return _get_project_root() / self.images
 
     @property
-    def products_path(self) -> str:
+    def products_path(self) -> Path:
         return _get_project_root() / self.products
 
     @property
-    def recipes_path(self) -> str:
+    def recipes_path(self) -> Path:
         return _get_project_root() / self.recipes
 
     def __post_init__(self):
@@ -132,7 +132,7 @@ class Config:
             return self.model_configs.recommend_recipes
         return None
 
-    def get_prompt_file_path(self, task_type: TaskType) -> str | None:
+    def get_prompt_file_path(self, task_type: TaskType) -> Path | None:
         if task_type == TaskType.EXTRACT_PRODUCT:
             return self.model_configs.extract_product.prompt_file_path
         if task_type == TaskType.EMBEDDING:
